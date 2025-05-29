@@ -35,6 +35,29 @@ async def main() -> None:
         layout="wide",
     )
 
+    @st.dialog("Architecture")
+    def architecture_dialog() -> None:
+        st.image(
+            "https://github.com/azurelotus06/agent-service-toolkit/blob/main/media/agent_architecture.png?raw=true"
+        )
+        ""
+        st.caption(
+            "App hosted on [Streamlit Cloud](https://share.streamlit.io/) with FastAPI service running in [Azure](https://learn.microsoft.com/en-us/azure/app-service/)"
+        )
+
+    @st.dialog("Share/resume chat")
+    def share_chat_dialog() -> None:
+        session = st.runtime.get_instance()._session_mgr.list_active_sessions()[0]
+        st_base_url = urllib.parse.urlunparse(
+            [session.client.request.protocol, session.client.request.host, "", "", "", ""]
+        )
+        # if it's not localhost, switch to https by default
+        if not st_base_url.startswith("https") and "localhost" not in st_base_url:
+            st_base_url = st_base_url.replace("http", "https")
+        chat_url = f"{st_base_url}?thread_id={st.session_state.thread_id}"
+        st.markdown(f"**Chat URL:**\n```text\n{chat_url}\n```")
+        st.info("Copy the above URL to share or revisit this chat")
+
     # Premium professional styling
     st.html(
         """
@@ -196,12 +219,15 @@ async def main() -> None:
         st.header(f"{APP_ICON} {APP_TITLE}")
         st.divider()
         
+        # App description
         st.markdown("""
         <div style='color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem;'>
         AI agent service built with LangGraph, FastAPI and Streamlit
         </div>
         """, unsafe_allow_html=True)
 
+        # Chat actions section
+        st.markdown("**Chat Actions**")
         if st.button(":material/chat: New Chat", 
                     use_container_width=True,
                     type="primary"):
@@ -209,8 +235,15 @@ async def main() -> None:
             st.session_state.thread_id = str(uuid.uuid4())
             st.rerun()
 
+        if st.button(":material/upload: Share/Resume Chat", 
+                    use_container_width=True):
+            share_chat_dialog()
+
+        st.divider()
+
+        # Configuration section
+        st.markdown("**Configuration**")
         with st.popover(":material/settings: Settings", use_container_width=True):
-            st.markdown("**Configuration**")
             model_idx = agent_client.info.models.index(agent_client.info.default_model)
             model = st.selectbox("LLM to use", 
                                options=agent_client.info.models, 
@@ -223,41 +256,18 @@ async def main() -> None:
                 index=agent_idx,
             )
             use_streaming = st.toggle("Stream results", value=True)
-            st.divider()
 
-        @st.dialog("Architecture")
-        def architecture_dialog() -> None:
-            st.image(
-                "https://github.com/azurelotus06/agent-service-toolkit/blob/main/media/agent_architecture.png?raw=true"
-            )
-            ""
-            st.caption(
-                "App hosted on [Streamlit Cloud](https://share.streamlit.io/) with FastAPI service running in [Azure](https://learn.microsoft.com/en-us/azure/app-service/)"
-            )
+        st.divider()
 
+        # Information section
+        st.markdown("**Information**")
         if st.button(":material/schema: Architecture", use_container_width=True):
             architecture_dialog()
 
-        with st.popover(":material/policy: Privacy", use_container_width=True):
+        with st.popover(":material/policy: Privacy Policy", use_container_width=True):
             st.write(
                 "Prompts, responses and feedback in this app are anonymously recorded and saved to LangSmith for product evaluation and improvement purposes only."
             )
-
-        @st.dialog("Share/resume chat")
-        def share_chat_dialog() -> None:
-            session = st.runtime.get_instance()._session_mgr.list_active_sessions()[0]
-            st_base_url = urllib.parse.urlunparse(
-                [session.client.request.protocol, session.client.request.host, "", "", "", ""]
-            )
-            # if it's not localhost, switch to https by default
-            if not st_base_url.startswith("https") and "localhost" not in st_base_url:
-                st_base_url = st_base_url.replace("http", "https")
-            chat_url = f"{st_base_url}?thread_id={st.session_state.thread_id}"
-            st.markdown(f"**Chat URL:**\n```text\n{chat_url}\n```")
-            st.info("Copy the above URL to share or revisit this chat")
-
-        if st.button(":material/upload: Share/resume chat", use_container_width=True):
-            share_chat_dialog()
 
         st.divider()
         st.markdown("""
