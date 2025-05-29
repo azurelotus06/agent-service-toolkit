@@ -23,8 +23,8 @@ from schema.task_data import TaskData, TaskDataStatus
 # The app heavily uses AgentClient to interact with the agent's FastAPI endpoints.
 
 
-APP_TITLE = "Agent Service Toolkit"
-APP_ICON = "🧰"
+APP_TITLE = "AI Agent Service"
+APP_ICON = "🎁"
 
 
 async def main() -> None:
@@ -198,7 +198,7 @@ async def main() -> None:
         
         st.markdown("""
         <div style='color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem;'>
-        Full toolkit for running an AI agent service built with LangGraph, FastAPI and Streamlit
+        AI agent service built with LangGraph, FastAPI and Streamlit
         </div>
         """, unsafe_allow_html=True)
 
@@ -228,9 +228,9 @@ async def main() -> None:
         @st.dialog("Architecture")
         def architecture_dialog() -> None:
             st.image(
-                "https://github.com/JoshuaC215/agent-service-toolkit/blob/main/media/agent_architecture.png?raw=true"
+                "https://github.com/azurelotus06/agent-service-toolkit/blob/main/media/agent_architecture.png?raw=true"
             )
-            "[View full size on Github](https://github.com/JoshuaC215/agent-service-toolkit/blob/main/media/agent_architecture.png)"
+            ""
             st.caption(
                 "App hosted on [Streamlit Cloud](https://share.streamlit.io/) with FastAPI service running in [Azure](https://learn.microsoft.com/en-us/azure/app-service/)"
             )
@@ -262,8 +262,6 @@ async def main() -> None:
         st.divider()
         st.markdown("""
         <div style='font-size: 0.8rem; color: #64748b;'>
-        [View the source code](https://github.com/JoshuaC215/agent-service-toolkit)<br>
-        Made with :material/favorite: by [Joshua](https://www.linkedin.com/in/joshua-k-carroll/) in Oakland
         </div>
         """, unsafe_allow_html=True)
 
