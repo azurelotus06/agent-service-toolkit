@@ -1,9 +1,9 @@
-# 🧰 AI Agent Service Toolkit
+# 🎁 AI Agent Service
 
 [![build status](https://github.com/azurelotus0926/agent-service-toolkit/actions/workflows/test.yml/badge.svg)](https://github.com/azurelotus0926/agent-service-toolkit/actions/workflows/test.yml) [![codecov](https://codecov.io/github/azurelotus0926/agent-service-toolkit/graph/badge.svg?token=5MTJSYWD05)](https://codecov.io/github/azurelotus0926/agent-service-toolkit) [![Python Version](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fazurelotus0926%2Fagent-service-toolkit%2Frefs%2Fheads%2Fmain%2Fpyproject.toml)](https://github.com/azurelotus0926/agent-service-toolkit/blob/main/pyproject.toml)
 [![GitHub License](https://img.shields.io/github/license/azurelotus0926/agent-service-toolkit)](https://github.com/azurelotus0926/agent-service-toolkit/blob/main/LICENSE) [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_red.svg)](https://agent-service-toolkit.streamlit.app/)
 
-A full toolkit for running an AI agent service built with LangGraph, FastAPI and Streamlit.
+AI agent service built with LangGraph, FastAPI and Streamlit.
 
 It includes a [LangGraph](https://langchain-ai.github.io/langgraph/) agent, a [FastAPI](https://fastapi.tiangolo.com/) service to serve it, a client to interact with the service, and a [Streamlit](https://streamlit.io/) app that uses the client to provide a chat interface. Data structures and settings are built with [Pydantic](https://github.com/pydantic/pydantic).
 

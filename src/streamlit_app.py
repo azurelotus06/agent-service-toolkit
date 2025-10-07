@@ -23,8 +23,8 @@ from schema.task_data import TaskData, TaskDataStatus
 # The app heavily uses AgentClient to interact with the agent's FastAPI endpoints.
 
 
-APP_TITLE = "Agent Service Toolkit"
-APP_ICON = "🧰"
+APP_TITLE = "AI Agent Service"
+APP_ICON = "🎁"
 
 
 async def main() -> None:
@@ -32,17 +32,127 @@ async def main() -> None:
         page_title=APP_TITLE,
         page_icon=APP_ICON,
         menu_items={},
+        layout="wide",
     )
 
-    # Hide the streamlit upper-right chrome
+    # Premium professional styling
     st.html(
         """
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         [data-testid="stStatusWidget"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
-            }
+            visibility: hidden;
+            height: 0%;
+            position: fixed;
+        }
+        
+        /* Main app styling */
+        .stApp {
+            background: linear-gradient(135deg, #0a0e17 0%, #13182a 100%);
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Sidebar styling */
+        .st-emotion-cache-6qob1r {
+            background: linear-gradient(135deg, #13182a 0%, #1a2138 100%) !important;
+            border-right: 1px solid #2a3152;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Chat bubbles */
+        .stChatMessage {
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.25rem;
+            max-width: 80%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stChatMessage:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .stChatMessage[data-testid="chat-human"] {
+            background: linear-gradient(135deg, #2a3152 0%, #3a4268 100%);
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+            border-left: 3px solid #4f6af5;
+        }
+        .stChatMessage[data-testid="chat-ai"] {
+            background: linear-gradient(135deg, #1a2138 0%, #242d4d 100%);
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+            border-left: 3px solid #4f6af5;
+        }
+        
+        /* Buttons and inputs */
+        .stButton>button {
+            background: linear-gradient(135deg, #4f6af5 0%, #3a56e8 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(79, 106, 245, 0.3);
+        }
+        .stButton>button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(79, 106, 245, 0.4);
+            background: linear-gradient(135deg, #3a56e8 0%, #2a46d6 100%);
+        }
+        .stTextInput>div>div>input {
+            background-color: #1a2138;
+            color: white;
+            border: 1px solid #2a3152;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        .stTextInput>div>div>input:focus {
+            border-color: #4f6af5;
+            box-shadow: 0 0 0 2px rgba(79, 106, 245, 0.2);
+        }
+        
+        /* Headers and text */
+        h1, h2, h3, h4, h5, h6 {
+            color: #f8fafc !important;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+        p, .stMarkdown {
+            color: #e2e8f0 !important;
+            line-height: 1.6;
+        }
+        
+        /* Spacing improvements */
+        .st-emotion-cache-1y4p8pa {
+            padding: 2.5rem 4rem;
+        }
+        
+        /* Status widgets */
+        .stStatusWidget {
+            background: rgba(26, 33, 56, 0.9) !important;
+            border-radius: 0.75rem !important;
+            border: 1px solid #2a3152 !important;
+        }
+        
+        /* Popovers and dialogs */
+        .stPopover {
+            background: #1a2138 !important;
+            border: 1px solid #2a3152 !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+        }
+        
+        /* Feedback widget */
+        .stFeedback {
+            background: #1a2138 !important;
+            border: 1px solid #2a3152 !important;
+            border-radius: 0.75rem !important;
+        }
         </style>
         """,
     )
@@ -84,19 +194,27 @@ async def main() -> None:
     # Config options
     with st.sidebar:
         st.header(f"{APP_ICON} {APP_TITLE}")
+        st.divider()
+        
+        st.markdown("""
+        <div style='color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem;'>
+        AI agent service built with LangGraph, FastAPI and Streamlit
+        </div>
+        """, unsafe_allow_html=True)
 
-        ""
-        "Full toolkit for running an AI agent service built with LangGraph, FastAPI and Streamlit"
-        ""
-
-        if st.button(":material/chat: New Chat", use_container_width=True):
+        if st.button(":material/chat: New Chat", 
+                    use_container_width=True,
+                    type="primary"):
             st.session_state.messages = []
             st.session_state.thread_id = str(uuid.uuid4())
             st.rerun()
 
         with st.popover(":material/settings: Settings", use_container_width=True):
+            st.markdown("**Configuration**")
             model_idx = agent_client.info.models.index(agent_client.info.default_model)
-            model = st.selectbox("LLM to use", options=agent_client.info.models, index=model_idx)
+            model = st.selectbox("LLM to use", 
+                               options=agent_client.info.models, 
+                               index=model_idx)
             agent_list = [a.key for a in agent_client.info.agents]
             agent_idx = agent_list.index(agent_client.info.default_agent)
             agent_client.agent = st.selectbox(
@@ -105,13 +223,14 @@ async def main() -> None:
                 index=agent_idx,
             )
             use_streaming = st.toggle("Stream results", value=True)
+            st.divider()
 
         @st.dialog("Architecture")
         def architecture_dialog() -> None:
             st.image(
-                "https://github.com/JoshuaC215/agent-service-toolkit/blob/main/media/agent_architecture.png?raw=true"
+                "https://github.com/azurelotus06/agent-service-toolkit/blob/main/media/agent_architecture.png?raw=true"
             )
-            "[View full size on Github](https://github.com/JoshuaC215/agent-service-toolkit/blob/main/media/agent_architecture.png)"
+            ""
             st.caption(
                 "App hosted on [Streamlit Cloud](https://share.streamlit.io/) with FastAPI service running in [Azure](https://learn.microsoft.com/en-us/azure/app-service/)"
             )
@@ -140,10 +259,11 @@ async def main() -> None:
         if st.button(":material/upload: Share/resume chat", use_container_width=True):
             share_chat_dialog()
 
-        "[View the source code](https://github.com/JoshuaC215/agent-service-toolkit)"
-        st.caption(
-            "Made with :material/favorite: by [Joshua](https://www.linkedin.com/in/joshua-k-carroll/) in Oakland"
-        )
+        st.divider()
+        st.markdown("""
+        <div style='font-size: 0.8rem; color: #64748b;'>
+        </div>
+        """, unsafe_allow_html=True)
 
     # Draw existing messages
     messages: list[ChatMessage] = st.session_state.messages
